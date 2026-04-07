@@ -10,7 +10,7 @@ Build a backend system where users can track their usage of different AI platfor
 
 * project folder : ai-preference-drf
 
-*accounts app: 
+* accounts app: 
 tokens.py --> custmize JWT token --> it contains role & username
 permissions.py --> authorization --> check role to allow access
 Authentication (simpleJWT)
