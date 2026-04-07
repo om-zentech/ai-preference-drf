@@ -3,15 +3,16 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Company, AIProduct, AIModel
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
+from accounts.permissions import IsAdminOrSuperAdmin
 from .serializers import CompanySerializer, AIProductSerializer, AIModelSerializer
 
 class CompanyListCreateView(APIView):
     
     def get_permissions(self):
-        if self.request.method == 'GET':
-            return [IsAuthenticated()]
-        return [IsAuthenticated(), IsAdminUser()]
+        if self.request.method == 'POST':
+            return [IsAdminOrSuperAdmin()]
+        return [IsAuthenticated()]
 
     def get(self, request):
         companies = Company.objects.all()
@@ -28,9 +29,9 @@ class CompanyListCreateView(APIView):
 class AIProductListCreateView(APIView):
     
     def get_permissions(self):
-        if self.request.method == 'GET':
-            return [IsAuthenticated()]
-        return [IsAuthenticated(), IsAdminUser()]
+        if self.request.method == 'POST':
+            return [IsAdminOrSuperAdmin()]
+        return [IsAuthenticated()]
 
     def get(self, request):
         products = AIProduct.objects.all()
@@ -47,9 +48,9 @@ class AIProductListCreateView(APIView):
 class AIModelListCreateView(APIView):
     
     def get_permissions(self):
-        if self.request.method == 'GET':
-            return [IsAuthenticated()]
-        return [IsAuthenticated(), IsAdminUser()]
+        if self.request.method == 'POST':
+            return [IsAdminOrSuperAdmin()]
+        return [IsAuthenticated()]
 
     def get(self, request):
         models = AIModel.objects.all()
