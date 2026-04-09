@@ -16,3 +16,8 @@ Build a backend system where users can track their usage of different AI platfor
 3. Authentication (simpleJWT)
 4. User Auth 
 5. Role based permissions
+
+* superadmin:
+- superadmin can access all actions
+- can promote any user --> admin
+- can demote any admin --> user
