@@ -7,11 +7,15 @@ class CompanySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AIProductSerializer(serializers.ModelSerializer):
+    company_name = serializers.CharField(source='company.company_name', read_only=True)
+    
     class Meta:
         model = AIProduct
         fields = '__all__'
 
 class AIModelSerializer(serializers.ModelSerializer):
+    product_name = serializers.CharField(source='product.product_name', read_only=True)
+ 
     class Meta:
         model = AIModel
         fields = '__all__'

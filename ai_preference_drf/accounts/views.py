@@ -6,8 +6,10 @@ from .serializers import RegisterSerializer, ProfileSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .tokens import CustomTokenSerializer
+from .permissions import IsSuperAdmin
 from .models import User
-from .constants import USER_REGISTER_SUCCESSFUL
+from accounts.constants import (USER_REGISTER_SUCCESSFUL, PROMOT_USER_TO_ADMIN, USER_NOT_FOUND,
+                                DEMOT_ADMIN_TO_USER, ADMIN_NOT_FOUND, CANT_DEMOTE_YOURSELF, ALREADY_SUPERADMIN)
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -28,3 +30,42 @@ class ProfileView(APIView):
     def get(self, request):
         serializer = ProfileSerializer(request.user)
         return Response(serializer.data)
+    
+class UserListView(APIView):
+    permission_classes = [IsSuperAdmin]
+
+    def get(self, request):
+        users = User.objects.all()
+        serializer = RegisterSerializer(users, many=True)
+        return Response(serializer.data)
+    
+class PromoteUserView(APIView):
+    permission_classes = [IsSuperAdmin]
+
+    def post(self, request, user_id):
+        try:
+            user = User.objects.get(id=user_id)
+            
+            if request.user.id == user.id and user.role == 'superadmin':
+                return Response({"error": ALREADY_SUPERADMIN}, status=status.HTTP_400_BAD_REQUEST)
+            user.role = "admin"
+            user.save()
+            return Response({"message": PROMOT_USER_TO_ADMIN}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({"error": USER_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
+        
+class DemoteUserView(APIView):
+    permission_classes = [IsSuperAdmin]
+
+    def post(self, request, user_id):
+        try:
+            user = User.objects.get(id=user_id)
+            
+            if request.user.id == user.id and user.role == 'superadmin':
+                return Response({"error": CANT_DEMOTE_YOURSELF}, status=status.HTTP_400_BAD_REQUEST)
+                
+            user.role = "user"
+            user.save()
+            return Response({"message": DEMOT_ADMIN_TO_USER}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({"error": ADMIN_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
