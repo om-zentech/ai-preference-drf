@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-70a3z%g_%=g*v=gs(0t5bb_%+$at47x&$6+v3m6iepf1yhxb*b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'accounts',
     'providers',
-    'usage',
+    'usage.apps.UsageConfig',
 ]
 
 MIDDLEWARE = [
@@ -91,7 +91,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 

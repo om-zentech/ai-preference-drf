@@ -21,3 +21,12 @@ Build a backend system where users can track their usage of different AI platfor
 - superadmin can access all actions
 - can promote any user --> admin
 - can demote any admin --> user
+
+* Soft-Delete profile:
+- introduce soft delete feature for profile
+- API --> delete-profile 
+
+* UsageLog:
+- auto calculate cost according to price and token used
+- create usage log based on usage of ai model
+

@@ -9,7 +9,7 @@ from .tokens import CustomTokenSerializer
 from .permissions import IsSuperAdmin
 from .models import User
 from accounts.constants import (USER_REGISTER_SUCCESSFUL, PROMOT_USER_TO_ADMIN, USER_NOT_FOUND,
-                                DEMOT_ADMIN_TO_USER, ADMIN_NOT_FOUND, CANT_DEMOTE_YOURSELF, ALREADY_SUPERADMIN)
+                                DEMOT_ADMIN_TO_USER, ADMIN_NOT_FOUND, CANT_DEMOTE_YOURSELF, ALREADY_SUPERADMIN, ACCOUNT_DELETE_SUCCESS)
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -35,9 +35,17 @@ class UserListView(APIView):
     permission_classes = [IsSuperAdmin]
 
     def get(self, request):
-        users = User.objects.all()
+        users = User.objects.filter(is_deleted=False)
         serializer = RegisterSerializer(users, many=True)
         return Response(serializer.data)
+    
+class DeleteProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        user = request.user
+        user.delete()
+        return Response({"message": ACCOUNT_DELETE_SUCCESS})
     
 class PromoteUserView(APIView):
     permission_classes = [IsSuperAdmin]
