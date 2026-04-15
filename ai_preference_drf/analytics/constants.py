@@ -1,0 +1,6 @@
+EMAIL_SUBJECT = 'Your Usage Report'
+EMAIL_BODY = 'Attached is your usage CSV report'
+CSV_FILE_NAME = 'usage_logs.csv'
+EMAIL_SENT_SUCCESS = 'CSV sent to your email successfully'
+EMAIL_SENT_FAIL = 'Failed to send email'
+FAILED_TO_FETCH = 'Failed to fetch data.'

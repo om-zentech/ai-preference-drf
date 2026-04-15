@@ -30,3 +30,10 @@ Build a backend system where users can track their usage of different AI platfor
 - auto calculate cost according to price and token used
 - create usage log based on usage of ai model
 
+* Role based access:
+- superadmin --> get-all-users, get-revenue, promote-user-to-admin, demote-admin-to-user
+- admin --> create/update - company/product/AImodel, get-top-users, get-top-models
+- user --> create-usage, get-company/product/model, get-usage, get-monthly-usage, get-usage-by-model, export-usage-as-csv
+
+* Export CSV --> email:
+- user can get their usage as csv file on their email

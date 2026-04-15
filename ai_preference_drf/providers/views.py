@@ -42,10 +42,10 @@ class CompanyDetailView(APIView):
         company = self.get_object(pk)
         serializer = CompanySerializer(company)
         return Response(serializer.data)
-
-    def put(self, request, pk):
+    
+    def patch(self, request, pk):
         company = self.get_object(pk)
-        serializer = CompanySerializer(company, data=request.data)
+        serializer = CompanySerializer(company, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -85,9 +85,9 @@ class AIProductDetailView(APIView):
         serializer = AIProductSerializer(product)
         return Response(serializer.data)
 
-    def put(self, request, pk):
+    def patch(self, request, pk):
         product = self.get_object(pk)
-        serializer = AIProductSerializer(product, data=request.data)
+        serializer = AIProductSerializer(product, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -127,9 +127,9 @@ class AIModelDetailView(APIView):
         serializer = AIModelSerializer(model)
         return Response(serializer.data)
 
-    def put(self, request, pk):
+    def patch(self, request, pk):
         model = self.get_object(pk)
-        serializer = AIModelSerializer(model, data=request.data)
+        serializer = AIModelSerializer(model, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
