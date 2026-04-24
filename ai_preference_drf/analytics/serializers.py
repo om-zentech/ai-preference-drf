@@ -16,7 +16,7 @@ class TopModelSerializer(serializers.Serializer):
 
 class MonthlyUsageSerializer(serializers.Serializer):
     month = serializers.DateTimeField()
-    model_name = serializers.CharField(source='model__model_name')
+    model_name = serializers.CharField()
     total_tokens = serializers.IntegerField()
     total_cost = serializers.DecimalField(max_digits=12, decimal_places=4)
 

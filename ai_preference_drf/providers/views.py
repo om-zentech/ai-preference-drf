@@ -2,54 +2,61 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Company, AIProduct, AIModel
-from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from accounts.permissions import IsAdminOrSuperAdmin
-from .serializers import CompanySerializer, AIProductSerializer, AIModelSerializer
-from providers import constants
+from providers.services.company_service import CompanyService
+from providers.services.product_service import AIProductService
+from providers.services.model_service import AIModelService
 
 class CompanyListCreateView(APIView):
-    
+
     def get_permissions(self):
         if self.request.method == 'POST':
             return [IsAdminOrSuperAdmin()]
         return [IsAuthenticated()]
 
     def get(self, request):
-        companies = Company.objects.all()
-        serializer = CompanySerializer(companies, many=True)
-        return Response({'message':constants.COMPANY_RETRIEVED_SUCCESS, 'data':serializer.data}, status=status.HTTP_200_OK)
+        service = CompanyService()
+        result = service.list_companies()
+
+        if "error" in result:
+            return Response(result, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response(result, status=status.HTTP_200_OK)
 
     def post(self, request):
-        serializer = CompanySerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'message':constants.COMPANY_CREATED_SUCCESS, 'data':serializer.data}, status=status.HTTP_200_OK)
-        return Response(serializer.data)
+        service = CompanyService()
+        result = service.create_company(request.data)
+
+        if "error" in result:
+            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(result, status=status.HTTP_201_CREATED)
     
 class CompanyDetailView(APIView):
 
     def get_permissions(self):
-        if self.request.method == 'PUT':
+        if self.request.method == 'PATCH':
             return [IsAdminOrSuperAdmin()]
         return [IsAuthenticated()]
 
-    def get_object(self, pk):
-        return get_object_or_404(Company, pk=pk)
-
     def get(self, request, pk):
-        company = self.get_object(pk)
-        serializer = CompanySerializer(company)
-        return Response(serializer.data)
-    
+        service = CompanyService()
+        result = service.get_company(pk)
+
+        if "error" in result:
+            return Response(result, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(result, status=status.HTTP_200_OK)
+
     def patch(self, request, pk):
-        company = self.get_object(pk)
-        serializer = CompanySerializer(company, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+        service = CompanyService()
+        result = service.update_company(pk, request.data)
+
+        if "error" in result:
+            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(result, status=status.HTTP_200_OK)
     
 class AIProductListCreateView(APIView):
     
@@ -59,39 +66,47 @@ class AIProductListCreateView(APIView):
         return [IsAuthenticated()]
 
     def get(self, request):
-        products = AIProduct.objects.all()
-        serializer = AIProductSerializer(products, many=True)
-        return Response(serializer.data)
+        service = AIProductService()
+        result = service.list_products()
+
+        if "error" in result:
+            return Response(result, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response(result, status=status.HTTP_200_OK)
 
     def post(self, request):
-        serializer = AIProductSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+        service = AIProductService()
+        result = service.create_product(request.data)
+
+        if "error" in result:
+            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(result, status=status.HTTP_201_CREATED)
     
 class AIProductDetailView(APIView):
 
     def get_permissions(self):
-        if self.request.method == 'POST':
+        if self.request.method == 'PATCH':
             return [IsAdminOrSuperAdmin()]
         return [IsAuthenticated()]
 
-    def get_object(self, pk):
-        return get_object_or_404(AIProduct, pk=pk)
-
     def get(self, request, pk):
-        product = self.get_object(pk)
-        serializer = AIProductSerializer(product)
-        return Response(serializer.data)
+        service = AIProductService()
+        result = service.get_product(pk)
+
+        if "error" in result:
+            return Response(result, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(result, status=status.HTTP_200_OK)
 
     def patch(self, request, pk):
-        product = self.get_object(pk)
-        serializer = AIProductSerializer(product, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+        service = AIProductService()
+        result = service.update_product(pk, request.data)
+
+        if "error" in result:
+            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(result, status=status.HTTP_200_OK)
 
 class AIModelListCreateView(APIView):
     
@@ -101,36 +116,44 @@ class AIModelListCreateView(APIView):
         return [IsAuthenticated()]
 
     def get(self, request):
-        models = AIModel.objects.all()
-        serializer = AIModelSerializer(models, many=True)
-        return Response(serializer.data)
+        service = AIModelService()
+        result = service.list_models()
+
+        if "error" in result:
+            return Response(result, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response(result, status=status.HTTP_200_OK)
 
     def post(self, request):
-        serializer = AIModelSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
-    
+        service = AIModelService()
+        result = service.create_model(request.data)
+
+        if "error" in result:
+            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(result, status=status.HTTP_201_CREATED)    
+
 class AIModelDetailView(APIView):
 
     def get_permissions(self):
-        if self.request.method == "PUT":
+        if self.request.method == "PATCH":
             return [IsAdminOrSuperAdmin()]
         return [IsAuthenticated()]
 
-    def get_object(self, pk):
-        return get_object_or_404(AIModel, pk=pk)
-
     def get(self, request, pk):
-        model = self.get_object(pk)
-        serializer = AIModelSerializer(model)
-        return Response(serializer.data)
+        service = AIModelService()
+        result = service.get_model(pk)
+
+        if "error" in result:
+            return Response(result, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(result, status=status.HTTP_200_OK)
 
     def patch(self, request, pk):
-        model = self.get_object(pk)
-        serializer = AIModelSerializer(model, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+        service = AIModelService()
+        result = service.update_model(pk, request.data)
+
+        if "error" in result:
+            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(result, status=status.HTTP_200_OK)
